@@ -77,6 +77,7 @@ public class AccountServiceImpl implements AccountService {
 		userRepository.save(user);
 
 		log.debug("Sending confirmation token to the selected email: {}", user.getEmail());
+		log.debug("Sending confirmation token from: {}", properties.getEmailFrom());
 		String message = messages.getMessage("email.registration", null, locale);
 		String link = properties.getRedirectionUrl() + "/confirmationRedirect?token=" + user.getConfirmationToken();
 		emailService.prepareAndSend(user.getEmail(), properties.getEmailFrom(), "Registration confirmation", message,
