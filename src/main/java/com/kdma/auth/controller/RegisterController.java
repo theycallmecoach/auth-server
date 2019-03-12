@@ -40,6 +40,18 @@ public class RegisterController {
 		this.messages = messages;
 	}
 
+	/**
+	 * <p>
+	 * Return ModelAndView for registration page.
+	 * </p>
+	 */
+	@GetMapping("/register")
+	public ModelAndView showRegistrationPage(ModelAndView modelAndView, User user) {
+		modelAndView.addObject("user", user);
+		modelAndView.setViewName(REGISTER);
+		return modelAndView;
+	}
+
 	@PostMapping("/register")
 	public ModelAndView processRegistrationForm(ModelAndView modelAndView, @Valid User user, Locale locale) {
 		log.debug("User registration - POST");
@@ -72,11 +84,11 @@ public class RegisterController {
 		}
 
 		Optional<User> optUser = accountService.getUserForToken(token);
-		optUser.ifPresentOrElse(
-				user -> modelAndView.addObject("confirmationToken", user.getConfirmationToken()),
+		optUser.ifPresentOrElse(user -> modelAndView.addObject("confirmationToken", user.getConfirmationToken()),
 				() -> {
 					log.debug("No user found that matches this token: {}", token);
-					modelAndView.addObject("invalidToken", messages.getMessage("registration.invalidToken", null, locale));
+					modelAndView.addObject("invalidToken",
+							messages.getMessage("registration.invalidToken", null, locale));
 				});
 		modelAndView.addObject("mobile", mobile);
 		return modelAndView;
@@ -86,29 +98,26 @@ public class RegisterController {
 	public String showRedirectionFonfirmationPage(@RequestParam("token") String token) {
 		return "redirect:/confirm?token=" + token;
 	}
-	
-	
+
 	@PostMapping("/confirm")
-	public ModelAndView processConfirmationForm(ModelAndView modelAndView, 
-			@RequestParam("token") String token,
-			@RequestParam("password") String password,
-			@RequestParam("confirmaPassword") String confirmPassword,
+	public ModelAndView processConfirmationForm(ModelAndView modelAndView, @RequestParam("token") String token,
+			@RequestParam("password") String password, @RequestParam("confirmaPassword") String confirmPassword,
 			Locale locale) {
 		log.debug("POST -> confirmation form");
-		
+
 		modelAndView.setViewName(CONFIRM);
-		
+
 		if (!password.contentEquals(confirmPassword)) {
 			modelAndView.setView(new RedirectView(CONFIRM));
 			modelAndView.addObject("token", token);
 			modelAndView.addObject("passwordError", true);
-			
+
 			return modelAndView;
 		}
-		
+
 		modelAndView.addObject("loginLink", "/login");
 		accountService.confirmUser(token, password);
-	    modelAndView.addObject(SUCCESS_MESSAGE, messages.getMessage("registration.passwordSuccess", null, locale));
-	    return modelAndView;
+		modelAndView.addObject(SUCCESS_MESSAGE, messages.getMessage("registration.passwordSuccess", null, locale));
+		return modelAndView;
 	}
 }
