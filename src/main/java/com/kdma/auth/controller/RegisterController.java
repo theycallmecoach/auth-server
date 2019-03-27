@@ -77,7 +77,7 @@ public class RegisterController {
 			@RequestParam(value = "passwordError", required = false) boolean passwordError, Locale locale) {
 		log.debug("GET -> show Confirmation");
 
-		modelAndView.setViewName("CONFIRM");
+		modelAndView.setViewName(CONFIRM);
 		if (passwordError) {
 			log.debug("Passwords are not matching!");
 			modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("password.notMatching", null, locale));
@@ -101,7 +101,7 @@ public class RegisterController {
 
 	@PostMapping("/confirm")
 	public ModelAndView processConfirmationForm(ModelAndView modelAndView, @RequestParam("token") String token,
-			@RequestParam("password") String password, @RequestParam("confirmaPassword") String confirmPassword,
+			@RequestParam("password") String password, @RequestParam("confirmPassword") String confirmPassword,
 			Locale locale) {
 		log.debug("POST -> confirmation form");
 

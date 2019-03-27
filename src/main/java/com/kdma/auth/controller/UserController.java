@@ -95,7 +95,7 @@ public class UserController {
 		return modelAndView;
 	}
 
-	@GetMapping
+	@GetMapping("/deleteSuccess")
 	public ModelAndView deleteSuccessPage(HttpServletRequest request, Locale locale,
 			@RequestParam(value = "success", required = false) boolean success) {
 		if (success) {
@@ -109,7 +109,7 @@ public class UserController {
 			}
 			
 			ModelAndView modelAndView = new ModelAndView(DELETE_SUCCESS);
-			modelAndView.addObject(CONFIRMATION_MESSAGE, messages.getMessage("delete.sucess", null, locale));
+			modelAndView.addObject(CONFIRMATION_MESSAGE, messages.getMessage("delete.success", null, locale));
 			return modelAndView;
 		}
 		return new ModelAndView("redirect:/" + PROFILE);
