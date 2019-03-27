@@ -38,13 +38,13 @@ body {
 }
 
 .bottom-group {
-  padding-top: 10px;
+	padding-top: 10px;
 }
 
 #language {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+  	position: absolute;
+  	top: 20px;
+  	right: 20px;
 }
 
 @media screen and (max-width: 960px) {
@@ -53,4 +53,5 @@ body {
     display: none;
   }
 }
+
 
