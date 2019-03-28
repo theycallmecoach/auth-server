@@ -69,7 +69,7 @@ public class User implements UserDetails {
 		if (roleName == Role.ADMIN) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 		}
-		return null;
+		return authorities;
 	}
 
 	@Override
