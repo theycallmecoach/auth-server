@@ -66,7 +66,7 @@ public class LogoutController {
 		return "redirect:/login?logout";
 	}
 	
-	@PostMapping
+	@PostMapping("/globalLogout")
 	public ModelAndView globalLogout(Principal principal, Locale locale) {
 		log.debug("Global Logout");
 		
