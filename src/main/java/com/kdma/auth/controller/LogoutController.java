@@ -1,3 +1,4 @@
+
 package com.kdma.auth.controller;
 
 import java.security.Principal;
@@ -24,57 +25,59 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LogoutController {
 
-	private static final String LOGOUT = "logout";
-	private static final String CONFIRMATION_MESSAGE = "confirmationMessage";
+  private static final String LOGOUT = "logout";
 
-	private final TokenService tokenService;
-	private MessageSource messages;
+  private static final String CONFIRMATION_MESSAGE = "confirmationMessage";
 
-	public LogoutController(TokenService tokenService, MessageSource messages) {
-		this.tokenService = tokenService;
-		this.messages = messages;
-	}
+  private final TokenService tokenService;
 
-	/**
-	 * Return logout page.
-	 * 
-	 * @return
-	 */
-	@GetMapping("/logout")
-	public String logout() {
-		return LOGOUT;
-	}
+  private MessageSource messages;
 
-	/**
-	 * Direct logout.
-	 * 
-	 * @param request
-	 * @return
-	 */
-	@PostMapping("/logout")
-	public String logout(HttpServletRequest request) {
-		log.debug("Direct logout");
+  public LogoutController(TokenService tokenService, MessageSource messages) {
+    this.tokenService = tokenService;
+    this.messages = messages;
+  }
 
-		SecurityContextHolder.getContext().setAuthentication(null);
-		SecurityContextHolder.clearContext();
-		// Invalidate session
-		final HttpSession session = request.getSession(false);
-		if (session != null) {
-			session.invalidate();
-		}
+  /**
+   * Return logout page.
+   * 
+   * @return
+   */
+  @GetMapping("/logout")
+  public String logout() {
+    return LOGOUT;
+  }
 
-		return "redirect:/login?logout";
-	}
-	
-	@PostMapping("/globalLogout")
-	public ModelAndView globalLogout(Principal principal, Locale locale) {
-		log.debug("Global Logout");
-		
-		ModelAndView modelAndView = new ModelAndView(LOGOUT);
-		
-		//Revoke Tokens
-		tokenService.revokeTokens(principal.getName());
-		modelAndView.addObject(CONFIRMATION_MESSAGE, messages.getMessage("logout.globalConfirmation", null, locale));
-		return modelAndView;
-	}
+  /**
+   * Direct logout.
+   * 
+   * @param request
+   * @return
+   */
+  @PostMapping("/logout")
+  public String logout(HttpServletRequest request) {
+    log.debug("Direct logout");
+
+    SecurityContextHolder.getContext().setAuthentication(null);
+    SecurityContextHolder.clearContext();
+    // Invalidate session
+    final HttpSession session = request.getSession(false);
+    if (session != null) {
+      session.invalidate();
+    }
+
+    return "redirect:/login?logout";
+  }
+
+  @PostMapping("/globalLogout")
+  public ModelAndView globalLogout(Principal principal, Locale locale) {
+    log.debug("Global Logout");
+
+    ModelAndView modelAndView = new ModelAndView(LOGOUT);
+
+    // Revoke Tokens
+    tokenService.revokeTokens(principal.getName());
+    modelAndView.addObject(CONFIRMATION_MESSAGE, messages.getMessage("logout.globalConfirmation", null, locale));
+    return modelAndView;
+  }
 }

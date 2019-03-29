@@ -1,3 +1,4 @@
+
 package com.kdma.auth.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -20,30 +21,30 @@ import com.kdma.auth.service.TokenService;
 @WebMvcTest(value = CredentialsController.class, secure = false)
 public class CredentialsControllerTest {
 
-	@Autowired
-	private MockMvc mvc;
+  @Autowired
+  private MockMvc mvc;
 
-	@MockBean
-	private AccountService registrationService;
+  @MockBean
+  private AccountService registrationService;
 
-	@MockBean
-	private AuthProperties properties;
+  @MockBean
+  private AuthProperties properties;
 
-	@MockBean
-	private TokenService tokenService;
+  @MockBean
+  private TokenService tokenService;
 
-	@Test
-	public void testGivenForgottenPasswordEndpointWhenAccessingForgottonPageThenVerifyForgottonViewIsReturned()
-			throws Exception {
-		this.mvc.perform(get("/forgotten")).andExpect(status().isOk()).andExpect(view().name("forgotten"));
-	}
+  @Test
+  public void testGivenForgottenPasswordEndpointWhenAccessingForgottonPageThenVerifyForgottonViewIsReturned()
+      throws Exception {
+    this.mvc.perform(get("/forgotten")).andExpect(status().isOk()).andExpect(view().name("forgotten"));
+  }
 
-	@Test
-	public void testGivenChangePasswordEndpointWhenAccessingForgottenPageThenVerifyChangePasswordReturned()
-			throws Exception {
-		// @formatter:off
+  @Test
+  public void testGivenChangePasswordEndpointWhenAccessingForgottenPageThenVerifyChangePasswordReturned()
+      throws Exception {
+    // @formatter:off
 		this.mvc.perform(get("/changePassword")).andExpect(status().isOk()).andExpect(view().name("changePassword"));
 		// @formatter:on
-	}
+  }
 
 }

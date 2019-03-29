@@ -1,3 +1,4 @@
+
 package com.kdma.auth.service;
 
 import java.util.Locale;
@@ -24,213 +25,238 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class AccountServiceImpl implements AccountService {
 
-	/** The user repository. */
-	private final UserRepository userRepository;
-	
-	/** The email service. */
-	private final EmailService emailService;
-	
-	/** The password encoder. */
-	private final BCryptPasswordEncoder passwordEncoder;
-	
-	/** The properties. */
-	private final AuthProperties properties;
-	
-	/** The messages. */
-	private final MessageSource messages;
+  /** The user repository. */
+  private final UserRepository userRepository;
 
-	/**
-	 * Instantiates a new account service impl.
-	 *
-	 * @param userRepository the user repository
-	 * @param emailService the email service
-	 * @param passwordEncoder the password encoder
-	 * @param properties the properties
-	 * @param messages the messages
-	 */
-	public AccountServiceImpl(UserRepository userRepository, EmailService emailService,
-			BCryptPasswordEncoder passwordEncoder, AuthProperties properties, MessageSource messages) {
-		this.userRepository = userRepository;
-		this.emailService = emailService;
-		this.passwordEncoder = passwordEncoder;
-		this.properties = properties;
-		this.messages = messages;
-	}
+  /** The email service. */
+  private final EmailService emailService;
 
-	/* (non-Javadoc)
-	 * @see com.kdma.auth.service.AccountService#registerUser(com.kdma.auth.model.User, java.util.Locale)
-	 */
-	@Override
-	public void registerUser(final User user, final Locale locale) {
-		log.debug("Register new user...");
+  /** The password encoder. */
+  private final BCryptPasswordEncoder passwordEncoder;
 
-		Optional<User> optUser = userRepository.findByEmail(user.getUsername());
+  /** The properties. */
+  private final AuthProperties properties;
 
-		// use existing
-		User u = optUser.orElse(user);
+  /** The messages. */
+  private final MessageSource messages;
 
-		// disable until confirmed via email
-		u.setEnabled(false);
+  /**
+   * Instantiates a new account service impl.
+   *
+   * @param userRepository
+   *          the user repository
+   * @param emailService
+   *          the email service
+   * @param passwordEncoder
+   *          the password encoder
+   * @param properties
+   *          the properties
+   * @param messages
+   *          the messages
+   */
+  public AccountServiceImpl(UserRepository userRepository, EmailService emailService,
+                            BCryptPasswordEncoder passwordEncoder, AuthProperties properties, MessageSource messages) {
+    this.userRepository = userRepository;
+    this.emailService = emailService;
+    this.passwordEncoder = passwordEncoder;
+    this.properties = properties;
+    this.messages = messages;
+  }
 
-		u.setConfirmationToken(UUID.randomUUID().toString());
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.kdma.auth.service.AccountService#registerUser(com.kdma.auth.model.User,
+   * java.util.Locale)
+   */
+  @Override
+  public void registerUser(final User user, final Locale locale) {
+    log.debug("Register new user...");
 
-		userRepository.save(user);
+    Optional<User> optUser = userRepository.findByEmail(user.getUsername());
 
-		log.debug("Sending confirmation token to the selected email: {}", user.getEmail());
-		log.debug("Sending confirmation token from: {}", properties.getEmailFrom());
-		String message = messages.getMessage("email.registration", null, locale);
-		String link = properties.getRedirectionUrl() + "/confirmRedirect?token=" + user.getConfirmationToken();
-		emailService.prepareAndSend(user.getEmail(), properties.getEmailFrom(), "Registration confirmation", message,
-				link);
-	}
+    // use existing
+    User u = optUser.orElse(user);
 
-	/* (non-Javadoc)
-	 * @see com.kdma.auth.service.AccountService#confirmUser(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void confirmUser(String token, String password) {
-		log.debug("Confirm user with token: {}", token);
+    // disable until confirmed via email
+    u.setEnabled(false);
 
-		// find the user with the given reset token
-		Optional<User> optUser = userRepository.findByConfirmationToken(token);
-		User user = optUser.orElseThrow(() -> new UsernameNotFoundException("No user found for token"));
+    u.setConfirmationToken(UUID.randomUUID().toString());
 
-		// set user password
-		user.setPassword(passwordEncoder.encode((CharSequence) password));
+    userRepository.save(user);
 
-		// enable the user
-		user.setEnabled(true);
-		user.setConfirmationToken("");
+    log.debug("Sending confirmation token to the selected email: {}", user.getEmail());
+    log.debug("Sending confirmation token from: {}", properties.getEmailFrom());
+    String message = messages.getMessage("email.registration", null, locale);
+    String link = properties.getRedirectionUrl() + "/confirmRedirect?token=" + user.getConfirmationToken();
+    emailService.prepareAndSend(user.getEmail(), properties.getEmailFrom(), "Registration confirmation", message,
+                                link);
+  }
 
-		userRepository.save(user);
-	}
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.kdma.auth.service.AccountService#confirmUser(java.lang.String, java.lang.String)
+   */
+  @Override
+  public void confirmUser(String token, String password) {
+    log.debug("Confirm user with token: {}", token);
 
-	/* (non-Javadoc)
-	 * @see com.kdma.auth.service.AccountService#isUserRegistered(com.kdma.auth.model.User)
-	 */
-	@Override
-	public boolean isUserRegistered(User user) {
-		Optional<User> optUser = userRepository.findByEmail(user.getUsername());
-		return optUser.map(u -> u.isEnabled()).orElse(false);
-	}
+    // find the user with the given reset token
+    Optional<User> optUser = userRepository.findByConfirmationToken(token);
+    User user = optUser.orElseThrow(() -> new UsernameNotFoundException("No user found for token"));
 
-	/* (non-Javadoc)
-	 * @see com.kdma.auth.service.AccountService#getUserForToken(java.lang.String)
-	 */
-	@Override
-	public Optional<User> getUserForToken(String token) {
-		return userRepository.findByConfirmationToken(token);
-	}
+    // set user password
+    user.setPassword(passwordEncoder.encode((CharSequence) password));
 
-	/* (non-Javadoc)
-	 * @see com.kdma.auth.service.AccountService#resetPassword(com.kdma.auth.model.User, java.util.Locale)
-	 */
-	@Override
-	public void resetPassword(final User user, final Locale locale) {
-		log.debug("Resetting password for user: {}", user.getEmail());
+    // enable the user
+    user.setEnabled(true);
+    user.setConfirmationToken("");
 
-		Optional<User> optUser = userRepository.findByEmail(user.getEmail());
-		User usr = optUser.orElseThrow(() -> new UsernameNotFoundException("No user found with this email"));
+    userRepository.save(user);
+  }
 
-		// Generate random 36-character string token for confirmation link
-		usr.setConfirmationToken(UUID.randomUUID().toString());
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.kdma.auth.service.AccountService#isUserRegistered(com.kdma.auth.model.User)
+   */
+  @Override
+  public boolean isUserRegistered(User user) {
+    Optional<User> optUser = userRepository.findByEmail(user.getUsername());
+    return optUser.map(u -> u.isEnabled()).orElse(false);
+  }
 
-		// send email with confirmation token
-		log.debug("Sending confirmation token to the selected email address: {}", user.getEmail());
-		String message = messages.getMessage("email.resetPassword", null, locale);
-		String link = properties.getRedirectionUrl() + "/confirmRedirect?token=" + usr.getConfirmationToken();
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.kdma.auth.service.AccountService#getUserForToken(java.lang.String)
+   */
+  @Override
+  public Optional<User> getUserForToken(String token) {
+    return userRepository.findByConfirmationToken(token);
+  }
 
-		emailService.prepareAndSend(usr.getEmail(), properties.getEmailFrom(), "Password reset", message, link);
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.kdma.auth.service.AccountService#resetPassword(com.kdma.auth.model.User,
+   * java.util.Locale)
+   */
+  @Override
+  public void resetPassword(final User user, final Locale locale) {
+    log.debug("Resetting password for user: {}", user.getEmail());
 
-		// update user entity
-		userRepository.save(usr);
-	}
+    Optional<User> optUser = userRepository.findByEmail(user.getEmail());
+    User usr = optUser.orElseThrow(() -> new UsernameNotFoundException("No user found with this email"));
 
-	/* (non-Javadoc)
-	 * @see com.kdma.auth.service.AccountService#changePassword(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public boolean changePassword(String username, String oldPassword, String newPassword) {
-		log.debug("Changing password for user: {}", username);
-		Optional<User> optUser = userRepository.findByEmail(username);
-		if (!optUser.isPresent()) {
-			log.error("Cannot find user with this username");
-			return false;
-		}
-		User user = optUser.get();
+    // Generate random 36-character string token for confirmation link
+    usr.setConfirmationToken(UUID.randomUUID().toString());
 
-		boolean passwordMatch = passwordEncoder.matches(oldPassword, user.getPassword());
+    // send email with confirmation token
+    log.debug("Sending confirmation token to the selected email address: {}", user.getEmail());
+    String message = messages.getMessage("email.resetPassword", null, locale);
+    String link = properties.getRedirectionUrl() + "/confirmRedirect?token=" + usr.getConfirmationToken();
 
-		log.debug("Current password matches: {}", passwordMatch);
-		if (passwordMatch) {
-			user.setPassword(passwordEncoder.encode(newPassword));
-			userRepository.save(user);
-			return true;
-		}
+    emailService.prepareAndSend(usr.getEmail(), properties.getEmailFrom(), "Password reset", message, link);
 
-		// old password does not match
-		return false;
-	}
+    // update user entity
+    userRepository.save(usr);
+  }
 
-	/* (non-Javadoc)
-	 * @see com.kdma.auth.service.AccountService#changeEmail(java.lang.String, java.lang.String, java.lang.String, java.util.Locale)
-	 */
-	@Override
-	public boolean changeEmail(String username, String password, String newEmail, Locale locale) {
-		log.debug("Changing e-mail for user: {}", username);
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.kdma.auth.service.AccountService#changePassword(java.lang.String, java.lang.String,
+   * java.lang.String)
+   */
+  @Override
+  public boolean changePassword(String username, String oldPassword, String newPassword) {
+    log.debug("Changing password for user: {}", username);
+    Optional<User> optUser = userRepository.findByEmail(username);
+    if (!optUser.isPresent()) {
+      log.error("Cannot find user with this username");
+      return false;
+    }
+    User user = optUser.get();
 
-		Optional<User> optionalUser = userRepository.findByEmail(username);
-		if (!optionalUser.isPresent()) {
-			log.error("Cannot find user with this e-mail!");
-			return false;
-		}
+    boolean passwordMatch = passwordEncoder.matches(oldPassword, user.getPassword());
 
-		User user = optionalUser.get();
-		if (userRepository.findByEmail(newEmail).isPresent()) {
-			log.warn("User with email {} already exists.", newEmail);
+    log.debug("Current password matches: {}", passwordMatch);
+    if (passwordMatch) {
+      user.setPassword(passwordEncoder.encode(newPassword));
+      userRepository.save(user);
+      return true;
+    }
 
-			return false;
-		}
+    // old password does not match
+    return false;
+  }
 
-		boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.kdma.auth.service.AccountService#changeEmail(java.lang.String, java.lang.String,
+   * java.lang.String, java.util.Locale)
+   */
+  @Override
+  public boolean changeEmail(String username, String password, String newEmail, Locale locale) {
+    log.debug("Changing e-mail for user: {}", username);
 
-		log.debug("Current password matches: {}", passwordMatch);
-		if (passwordMatch) {
-			user.setPendingEmail(newEmail);
+    Optional<User> optionalUser = userRepository.findByEmail(username);
+    if (!optionalUser.isPresent()) {
+      log.error("Cannot find user with this e-mail!");
+      return false;
+    }
 
-			// Generate random 36-character string token for confirmation link
-			user.setConfirmationToken(UUID.randomUUID().toString());
+    User user = optionalUser.get();
+    if (userRepository.findByEmail(newEmail).isPresent()) {
+      log.warn("User with email {} already exists.", newEmail);
 
-			// send email with confirmation token
-			log.debug("Sending verification token {} to the selected email: {}", user.getConfirmationToken(), newEmail);
+      return false;
+    }
 
-			String message = messages.getMessage("email.verification", null, locale);
-			String link = properties.getRedirectionUrl() + "/verifyEmail?token=" + user.getConfirmationToken();
+    boolean passwordMatch = passwordEncoder.matches(password, user.getPassword());
 
-			emailService.prepareAndSend(newEmail, properties.getEmailFrom(), "E-mail change", message, link);
+    log.debug("Current password matches: {}", passwordMatch);
+    if (passwordMatch) {
+      user.setPendingEmail(newEmail);
 
-			userRepository.save(user);
+      // Generate random 36-character string token for confirmation link
+      user.setConfirmationToken(UUID.randomUUID().toString());
 
-			return true;
-		}
-		// passwords do not match
-		return false;
-	}
+      // send email with confirmation token
+      log.debug("Sending verification token {} to the selected email: {}", user.getConfirmationToken(), newEmail);
 
-	/* (non-Javadoc)
-	 * @see com.kdma.auth.service.AccountService#verifyEmail(com.kdma.auth.model.User)
-	 */
-	@Override
-	public void verifyEmail(User user) {
-		log.debug("Verifying e-mail {}", user.getPendingEmail());
+      String message = messages.getMessage("email.verification", null, locale);
+      String link = properties.getRedirectionUrl() + "/verifyEmail?token=" + user.getConfirmationToken();
 
-		// Set new e-mail
-		user.setEmail(user.getPendingEmail());
-		user.setPendingEmail(null);
-		user.setConfirmationToken("");
+      emailService.prepareAndSend(newEmail, properties.getEmailFrom(), "E-mail change", message, link);
 
-		// Save user
-		userRepository.save(user);
-	}
+      userRepository.save(user);
+
+      return true;
+    }
+    // passwords do not match
+    return false;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see com.kdma.auth.service.AccountService#verifyEmail(com.kdma.auth.model.User)
+   */
+  @Override
+  public void verifyEmail(User user) {
+    log.debug("Verifying e-mail {}", user.getPendingEmail());
+
+    // Set new e-mail
+    user.setEmail(user.getPendingEmail());
+    user.setPendingEmail(null);
+    user.setConfirmationToken("");
+
+    // Save user
+    userRepository.save(user);
+  }
 
 }

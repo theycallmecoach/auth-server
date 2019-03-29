@@ -1,3 +1,4 @@
+
 package com.kdma.auth.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -18,16 +19,16 @@ import com.kdma.auth.AuthProperties;
 @WebMvcTest(value = ProfileController.class, secure = false)
 public class ProfileControllerTest {
 
-	@Autowired
-	private MockMvc mvc;
+  @Autowired
+  private MockMvc mvc;
 
-	@MockBean
-	private AuthProperties properties;
+  @MockBean
+  private AuthProperties properties;
 
-	@Test
-	public void testGivenProfileEndpointWhenAccessingProfilePageThenVerifyProfileViewIsReturned() throws Exception {
-		// @formatter:off
+  @Test
+  public void testGivenProfileEndpointWhenAccessingProfilePageThenVerifyProfileViewIsReturned() throws Exception {
+    // @formatter:off
 		this.mvc.perform(get("/profile")).andExpect(status().isOk()).andExpect(view().name("profile"));
 		// @formatter:on
-	}
+  }
 }

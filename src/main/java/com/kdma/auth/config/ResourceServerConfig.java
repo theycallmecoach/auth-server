@@ -1,3 +1,4 @@
+
 package com.kdma.auth.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -9,17 +10,18 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
-	@Override
-	public void configure(HttpSecurity http) throws Exception {
-		http
-				// These paths are secured by this SecurityFilterChain
-				.requestMatchers().antMatchers("/user", "/users").and()
-				// These from the above are secured by the following way
-				.authorizeRequests().anyRequest().authenticated();
-	}
 
-	@Override
-	public void configure(ResourceServerSecurityConfigurer resources) {
-		resources.resourceId(null);
-	}
+  @Override
+  public void configure(HttpSecurity http) throws Exception {
+    http
+        // These paths are secured by this SecurityFilterChain
+        .requestMatchers().antMatchers("/user", "/users").and()
+        // These from the above are secured by the following way
+        .authorizeRequests().anyRequest().authenticated();
+  }
+
+  @Override
+  public void configure(ResourceServerSecurityConfigurer resources) {
+    resources.resourceId(null);
+  }
 }

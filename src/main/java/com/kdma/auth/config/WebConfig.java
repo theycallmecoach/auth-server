@@ -1,3 +1,4 @@
+
 package com.kdma.auth.config;
 
 import java.util.Locale;
@@ -15,15 +16,16 @@ import com.kdma.auth.AuthProperties;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-	private final AuthProperties properties;
 
-	public WebConfig(AuthProperties properties) {
-		this.properties = properties;
-	}
-	
-	@Override
-	  public void addCorsMappings(CorsRegistry registry) {
-	    // @formatter:off
+  private final AuthProperties properties;
+
+  public WebConfig(AuthProperties properties) {
+    this.properties = properties;
+  }
+
+  @Override
+  public void addCorsMappings(CorsRegistry registry) {
+    // @formatter:off
 	    registry
 	      .addMapping("/**")
 	      .allowedOrigins(properties.getCorsAllowedOrigins())
@@ -31,25 +33,24 @@ public class WebConfig implements WebMvcConfigurer {
 	      .allowedMethods("*")
 	      .allowCredentials(true);
 	    // @formatter:on
-	  }	
-	
-	
-	  @Override
-	  public void addInterceptors(InterceptorRegistry registry) {
-	    registry.addInterceptor(localeChangeInterceptor());
-	  }
-	  
-	  @Bean
-	  public LocaleResolver localeResolver() {
-	    SessionLocaleResolver slr = new SessionLocaleResolver();
-	    slr.setDefaultLocale(Locale.US);
-	    return slr;
-	  }	
-	  
-	  @Bean
-	  public LocaleChangeInterceptor localeChangeInterceptor() {
-	    LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-	    lci.setParamName("lang");
-	    return lci;
-	  }	  
+  }
+
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(localeChangeInterceptor());
+  }
+
+  @Bean
+  public LocaleResolver localeResolver() {
+    SessionLocaleResolver slr = new SessionLocaleResolver();
+    slr.setDefaultLocale(Locale.US);
+    return slr;
+  }
+
+  @Bean
+  public LocaleChangeInterceptor localeChangeInterceptor() {
+    LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
+    lci.setParamName("lang");
+    return lci;
+  }
 }

@@ -1,3 +1,4 @@
+
 package com.kdma.auth.config;
 
 import javax.sql.DataSource;
@@ -20,39 +21,43 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableAuthorizationServer
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
-	private final UserDetailsService userService;
-	private final TokenStore tokenStore;
-	private final DataSource dataSource;
-	private final AuthenticationManager authenticationManager;
 
-	public OAuth2Config(UserDetailsService userService, TokenStore tokenStore, DataSource dataSource,
-			@Lazy AuthenticationManager authenticationManager) {
-		this.userService = userService;
-		this.tokenStore = tokenStore;
-		this.dataSource = dataSource;
-		this.authenticationManager = authenticationManager;
-	}
+  private final UserDetailsService userService;
 
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+  private final TokenStore tokenStore;
 
-	@Override
-	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-		security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
-	}
+  private final DataSource dataSource;
 
-	@Override
-	public void configure(AuthorizationServerEndpointsConfigurer configurer) throws Exception {
-		configurer.authenticationManager(authenticationManager);
-		configurer.userDetailsService(userService);
-		configurer.tokenStore(tokenStore);
-	}
+  private final AuthenticationManager authenticationManager;
 
-	@Override
-	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.jdbc(dataSource);
-	}
+  public OAuth2Config(UserDetailsService userService, TokenStore tokenStore, DataSource dataSource,
+                      @Lazy AuthenticationManager authenticationManager) {
+    this.userService = userService;
+    this.tokenStore = tokenStore;
+    this.dataSource = dataSource;
+    this.authenticationManager = authenticationManager;
+  }
+
+  @Bean
+  public BCryptPasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  @Override
+  public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+    security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
+  }
+
+  @Override
+  public void configure(AuthorizationServerEndpointsConfigurer configurer) throws Exception {
+    configurer.authenticationManager(authenticationManager);
+    configurer.userDetailsService(userService);
+    configurer.tokenStore(tokenStore);
+  }
+
+  @Override
+  public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+    clients.jdbc(dataSource);
+  }
 
 }

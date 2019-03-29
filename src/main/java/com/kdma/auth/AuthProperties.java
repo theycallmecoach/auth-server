@@ -1,3 +1,4 @@
+
 package com.kdma.auth;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,7 +12,10 @@ import lombok.Setter;
 @Configuration
 @ConfigurationProperties("auth")
 public class AuthProperties {
-	private String redirectionUrl;
-	private String emailFrom;
-	private String corsAllowedOrigins;
+
+  private String redirectionUrl;
+
+  private String emailFrom;
+
+  private String corsAllowedOrigins;
 }

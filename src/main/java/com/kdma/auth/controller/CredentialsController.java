@@ -1,3 +1,4 @@
+
 package com.kdma.auth.controller;
 
 import java.security.Principal;
@@ -23,179 +24,196 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class CredentialsController {
 
-	private static final String FORGOTTEN = "forgotten";
-	private static final String CHANGE_PSWD = "changePassword";
-	private static final String CHANGE_EMAIL = "changeEmail";
-	private static final String VERIFY_EMAIL = "verifyEmail";
+  private static final String FORGOTTEN = "forgotten";
 
-	private static final String SUCCESS_MESSAGE = "successMessage";
-	private static final String CONFIRMATION_MESSAGE = "confirmationMessage";
-	private static final String ERROR_MESSAGE = "errorMessage";
+  private static final String CHANGE_PSWD = "changePassword";
 
-	private final AccountService accountService;
-	private final MessageSource messages;
-	private final TokenService tokenService;
+  private static final String CHANGE_EMAIL = "changeEmail";
 
-	/**
-	 * <p>
-	 * CredentialsControlelr constructor.
-	 * </p>
-	 */
-	public CredentialsController(AccountService accountService, MessageSource messages, TokenService tokenService) {
-		this.accountService = accountService;
-		this.messages = messages;
-		this.tokenService = tokenService;
-	}
+  private static final String VERIFY_EMAIL = "verifyEmail";
 
-	/**
-	 * <p>
-	 * Return ModelAndView for forgotten password page.
-	 * </p>
-	 */
-	@GetMapping("/forgotten")
-	public ModelAndView showForgottenPasswordPage(ModelAndView modelAndView, User user) {
-		modelAndView.addObject("user", user);
-		modelAndView.setViewName(FORGOTTEN);
+  private static final String SUCCESS_MESSAGE = "successMessage";
 
-		return modelAndView;
-	}
+  private static final String CONFIRMATION_MESSAGE = "confirmationMessage";
 
-	/**
-	 * <p>
-	 * Process input data from forgotten password form and validate them.
-	 * </p>
-	 */
-	@PostMapping("/forgotten")
-	public ModelAndView processForgottenPasswordForm(ModelAndView modelAndView, @Valid User user, Locale locale) {
-		log.debug("Forgotten password - POST");
+  private static final String ERROR_MESSAGE = "errorMessage";
 
-		modelAndView.setViewName(FORGOTTEN);
+  private final AccountService accountService;
 
-		if (!accountService.isUserRegistered(user)) {
-			log.warn("This user is not registered: {}", user);
+  private final MessageSource messages;
 
-			modelAndView.addObject(ERROR_MESSAGE,
-					messages.getMessage("registration.userNotRegistered", new Object[] { user.getEmail() }, locale));
+  private final TokenService tokenService;
 
-			return modelAndView;
-		}
+  /**
+   * <p>
+   * CredentialsControlelr constructor.
+   * </p>
+   */
+  public CredentialsController(AccountService accountService, MessageSource messages, TokenService tokenService) {
+    this.accountService = accountService;
+    this.messages = messages;
+    this.tokenService = tokenService;
+  }
 
-		// process request and reset password
-		accountService.resetPassword(user, locale);
+  /**
+   * <p>
+   * Return ModelAndView for forgotten password page.
+   * </p>
+   */
+  @GetMapping("/forgotten")
+  public ModelAndView showForgottenPasswordPage(ModelAndView modelAndView, User user) {
+    modelAndView.addObject("user", user);
+    modelAndView.setViewName(FORGOTTEN);
 
-		modelAndView.addObject(CONFIRMATION_MESSAGE,
-				messages.getMessage("registration.passwordResetEmail", new Object[] { user.getEmail() }, locale));
-		modelAndView.setViewName(FORGOTTEN);
+    return modelAndView;
+  }
 
-		return modelAndView;
-	}
+  /**
+   * <p>
+   * Process input data from forgotten password form and validate them.
+   * </p>
+   */
+  @PostMapping("/forgotten")
+  public ModelAndView processForgottenPasswordForm(ModelAndView modelAndView, @Valid User user, Locale locale) {
+    log.debug("Forgotten password - POST");
 
-	/**
-	 * <p>
-	 * Return changePassword page.
-	 * </p>
-	 */
-	@GetMapping("/changePassword")
-	public ModelAndView changePassword() {
-		return new ModelAndView(CHANGE_PSWD);
-	}
+    modelAndView.setViewName(FORGOTTEN);
 
-	/**
-	 * <p>
-	 * Process input data from changePassword page.
-	 * </p>
-	 */
-	@PostMapping("/changePassword")
-	public ModelAndView processPasswordChange(ModelAndView modelAndView,
-			@RequestParam("currentPassword") String currentPassword, @RequestParam("newPassword") String newPassword,
-			@RequestParam("confirmPassword") String confirmPassword, Locale locale, Principal principal) {
-		log.debug("ChangePassword endpoint - POST");
+    if (!accountService.isUserRegistered(user)) {
+      log.warn("This user is not registered: {}", user);
 
-		modelAndView.setViewName(CHANGE_PSWD);
+      modelAndView.addObject(ERROR_MESSAGE,
+                             messages.getMessage("registration.userNotRegistered", new Object[] {
+                                                                                                  user.getEmail()
+                             }, locale));
 
-		// new password must be different from the old one
-		if (currentPassword.equals(newPassword)) {
-			modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("password.notUnique", null, locale));
+      return modelAndView;
+    }
 
-			return modelAndView;
-		}
+    // process request and reset password
+    accountService.resetPassword(user, locale);
 
-		if (!newPassword.equals(confirmPassword)) {
-			modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("password.notMatching", null, locale));
+    modelAndView.addObject(CONFIRMATION_MESSAGE,
+                           messages.getMessage("registration.passwordResetEmail", new Object[] {
+                                                                                                 user.getEmail()
+                           }, locale));
+    modelAndView.setViewName(FORGOTTEN);
 
-			return modelAndView;
-		}
+    return modelAndView;
+  }
 
-		boolean success = accountService.changePassword(principal.getName(), currentPassword, newPassword);
+  /**
+   * <p>
+   * Return changePassword page.
+   * </p>
+   */
+  @GetMapping("/changePassword")
+  public ModelAndView changePassword() {
+    return new ModelAndView(CHANGE_PSWD);
+  }
 
-		if (success) {
-			modelAndView.addObject(SUCCESS_MESSAGE, messages.getMessage("password.changeSuccess", null, locale));
+  /**
+   * <p>
+   * Process input data from changePassword page.
+   * </p>
+   */
+  @PostMapping("/changePassword")
+  public ModelAndView processPasswordChange(ModelAndView modelAndView,
+                                            @RequestParam("currentPassword") String currentPassword,
+                                            @RequestParam("newPassword") String newPassword,
+                                            @RequestParam("confirmPassword") String confirmPassword, Locale locale,
+                                            Principal principal) {
+    log.debug("ChangePassword endpoint - POST");
 
-			// revoke tokens
-			tokenService.revokeTokens(principal.getName());
-		} else {
-			modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("password.incorrect", null, locale));
-		}
+    modelAndView.setViewName(CHANGE_PSWD);
 
-		return modelAndView;
-	}
+    // new password must be different from the old one
+    if (currentPassword.equals(newPassword)) {
+      modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("password.notUnique", null, locale));
 
-	/**
-	 * <p>
-	 * Return changeEmail page.
-	 * </p>
-	 */
-	@GetMapping("/changeEmail")
-	public ModelAndView changeEmail() {
-		return new ModelAndView(CHANGE_EMAIL);
-	}
+      return modelAndView;
+    }
 
-	/**
-	 * <p>
-	 * Process input data from changeEmail page.
-	 * </p>
-	 */
-	@PostMapping("/changeEmail")
-	public ModelAndView processEmailChange(ModelAndView modelAndView, @RequestParam("password") String password,
-			@RequestParam("email") String email, Locale locale, Principal principal) {
-		log.debug("ChangeEmail endpoint - POST");
+    if (!newPassword.equals(confirmPassword)) {
+      modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("password.notMatching", null, locale));
 
-		modelAndView.setViewName(CHANGE_EMAIL);
+      return modelAndView;
+    }
 
-		boolean success = accountService.changeEmail(principal.getName(), password, email, locale);
+    boolean success = accountService.changePassword(principal.getName(), currentPassword, newPassword);
 
-		if (success) {
-			modelAndView.addObject(SUCCESS_MESSAGE,
-					messages.getMessage("email.changeSuccess", new Object[] { email }, locale));
-		} else {
-			modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("email.changeFailure", null, locale));
-		}
+    if (success) {
+      modelAndView.addObject(SUCCESS_MESSAGE, messages.getMessage("password.changeSuccess", null, locale));
 
-		return modelAndView;
-	}
+      // revoke tokens
+      tokenService.revokeTokens(principal.getName());
+    } else {
+      modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("password.incorrect", null, locale));
+    }
 
-	/**
-	 * <p>
-	 * Return changeEmail page.
-	 * </p>
-	 */
-	@GetMapping("/verifyEmail")
-	public ModelAndView showVerifyEmailPage(ModelAndView modelAndView, @RequestParam("token") String token,
-			Locale locale) {
-		Optional<User> optionalUser = accountService.getUserForToken(token);
+    return modelAndView;
+  }
 
-		optionalUser.ifPresentOrElse(user -> {
-			accountService.verifyEmail(user);
+  /**
+   * <p>
+   * Return changeEmail page.
+   * </p>
+   */
+  @GetMapping("/changeEmail")
+  public ModelAndView changeEmail() {
+    return new ModelAndView(CHANGE_EMAIL);
+  }
 
-			modelAndView.addObject(SUCCESS_MESSAGE,
-					messages.getMessage("email.verificationSuccess", new Object[] { user.getEmail() }, locale));
-		}, () -> {
-			log.debug("No user found for this token: {}", token);
-			modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("email.verificationFailure", null, locale));
-		});
+  /**
+   * <p>
+   * Process input data from changeEmail page.
+   * </p>
+   */
+  @PostMapping("/changeEmail")
+  public ModelAndView processEmailChange(ModelAndView modelAndView, @RequestParam("password") String password,
+                                         @RequestParam("email") String email, Locale locale, Principal principal) {
+    log.debug("ChangeEmail endpoint - POST");
 
-		modelAndView.setViewName(VERIFY_EMAIL);
-		return modelAndView;
+    modelAndView.setViewName(CHANGE_EMAIL);
 
-	}
+    boolean success = accountService.changeEmail(principal.getName(), password, email, locale);
+
+    if (success) {
+      modelAndView.addObject(SUCCESS_MESSAGE,
+                             messages.getMessage("email.changeSuccess", new Object[] {
+                                                                                       email
+                             }, locale));
+    } else {
+      modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("email.changeFailure", null, locale));
+    }
+
+    return modelAndView;
+  }
+
+  /**
+   * <p>
+   * Return changeEmail page.
+   * </p>
+   */
+  @GetMapping("/verifyEmail")
+  public ModelAndView showVerifyEmailPage(ModelAndView modelAndView, @RequestParam("token") String token,
+                                          Locale locale) {
+    Optional<User> optionalUser = accountService.getUserForToken(token);
+
+    optionalUser.ifPresentOrElse(user -> {
+      accountService.verifyEmail(user);
+
+      modelAndView.addObject(SUCCESS_MESSAGE,
+                             messages.getMessage("email.verificationSuccess", new Object[] {
+                                                                                             user.getEmail()
+      }, locale));
+    }, () -> {
+      log.debug("No user found for this token: {}", token);
+      modelAndView.addObject(ERROR_MESSAGE, messages.getMessage("email.verificationFailure", null, locale));
+    });
+
+    modelAndView.setViewName(VERIFY_EMAIL);
+    return modelAndView;
+
+  }
 }

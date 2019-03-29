@@ -1,3 +1,4 @@
+
 package com.kdma.auth.config;
 
 import org.springframework.context.annotation.Bean;
@@ -13,27 +14,38 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	private static final String LOGIN = "/login";
-	private static final String LOGOUT_SUCCESS = "/login?logout";
-	private static final String REGISTER = "/register";
-	private static final String CONFIRM = "/confirm";
-	private static final String CONFIRM_REDIRECT = "/confirmRedirect";
-	private static final String PROFILE = "/profile";
-	private static final String FORGOTTEN = "/forgotten";
-	private static final String VERIFY = "/verifyEmail";
-	private static final String ERROR = "/error";
 
-	private final UserDetailsService userService;
-	private final AuthenticationManager authenticationManager;
+  private static final String LOGIN = "/login";
 
-	public WebSecurityConfig(UserDetailsService userService, @Lazy AuthenticationManager authenticationManager) {
-		this.userService = userService;
-		this.authenticationManager = authenticationManager;
-	}
-	@Override
-	  protected void configure(HttpSecurity http) throws Exception {
+  private static final String LOGOUT_SUCCESS = "/login?logout";
 
-	    // @formatter:off
+  private static final String REGISTER = "/register";
+
+  private static final String CONFIRM = "/confirm";
+
+  private static final String CONFIRM_REDIRECT = "/confirmRedirect";
+
+  private static final String PROFILE = "/profile";
+
+  private static final String FORGOTTEN = "/forgotten";
+
+  private static final String VERIFY = "/verifyEmail";
+
+  private static final String ERROR = "/error";
+
+  private final UserDetailsService userService;
+
+  private final AuthenticationManager authenticationManager;
+
+  public WebSecurityConfig(UserDetailsService userService, @Lazy AuthenticationManager authenticationManager) {
+    this.userService = userService;
+    this.authenticationManager = authenticationManager;
+  }
+
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+
+    // @formatter:off
 	    http
 	      // Enable CORS
 	      .cors().and()
@@ -49,27 +61,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	      .logout().logoutSuccessUrl(LOGOUT_SUCCESS);
 	      // @formatter:on
 
-	  }
+  }
 
-	  @Override
-	  public void configure(WebSecurity web) throws Exception {
-	    web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
-	  }
+  @Override
+  public void configure(WebSecurity web) throws Exception {
+    web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
+  }
 
-	  @Override
-	  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-	    auth.parentAuthenticationManager(authenticationManager);
-	    auth.userDetailsService(userService);
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.parentAuthenticationManager(authenticationManager);
+    auth.userDetailsService(userService);
 
-	    // nullify parent auth manager to prevent infinite loop when userDetails not
-	    // found for username
-	    auth.parentAuthenticationManager(null);
-	  }
+    // nullify parent auth manager to prevent infinite loop when userDetails not
+    // found for username
+    auth.parentAuthenticationManager(null);
+  }
 
-	  @Bean
-	  @Override
-	  public AuthenticationManager authenticationManagerBean() throws Exception {
-	    return super.authenticationManagerBean();
-	  }
+  @Bean
+  @Override
+  public AuthenticationManager authenticationManagerBean() throws Exception {
+    return super.authenticationManagerBean();
+  }
 
 }

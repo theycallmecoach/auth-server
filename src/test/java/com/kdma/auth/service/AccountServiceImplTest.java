@@ -1,3 +1,4 @@
+
 package com.kdma.auth.service;
 
 import static org.hamcrest.Matchers.is;
@@ -39,9 +40,11 @@ public class AccountServiceImplTest {
   private MessageSource messages;
 
   private AuthProperties properties;
+
   private AccountService accountService;
 
   private ArgumentCaptor<String> mailMessageCaptor = ArgumentCaptor.forClass(String.class);
+
   private ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
   @Before
@@ -140,7 +143,7 @@ public class AccountServiceImplTest {
 
     // then email was sent
     verify(emailService).prepareAndSend(mailMessageCaptor.capture(), eq("noreply@example.com"),
-        eq("Registration confirmation"), any(), any(String.class));
+                                        eq("Registration confirmation"), any(), any(String.class));
 
     assertThat(mailMessageCaptor.getValue(), is("user@example.com"));
 
@@ -162,7 +165,8 @@ public class AccountServiceImplTest {
 
     // then email was sent
     verify(emailService).prepareAndSend(eq("user@example.com"), eq("noreply@example.com"),
-        eq("Registration confirmation"), mailMessageCaptor.capture(), any(String.class));
+                                        eq("Registration confirmation"), mailMessageCaptor.capture(), any(
+                                                                                                          String.class));
 
     assertThat(mailMessageCaptor.getValue(), is("Registration email"));
 
@@ -239,7 +243,7 @@ public class AccountServiceImplTest {
 
     // then email was sent
     verify(emailService).prepareAndSend(mailMessageCaptor.capture(), eq("noreply@example.com"), eq("Password reset"),
-        any(), any(String.class));
+                                        any(), any(String.class));
 
     assertThat(mailMessageCaptor.getValue(), is("user@example.com"));
 
@@ -350,7 +354,7 @@ public class AccountServiceImplTest {
 
     // then email was sent
     verify(emailService).prepareAndSend(eq("user2@example.com"), eq("noreply@example.com"), eq("E-mail change"), any(),
-        any(String.class));
+                                        any(String.class));
   }
 
 }

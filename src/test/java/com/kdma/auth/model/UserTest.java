@@ -1,3 +1,4 @@
+
 package com.kdma.auth.model;
 
 import static org.hamcrest.Matchers.is;

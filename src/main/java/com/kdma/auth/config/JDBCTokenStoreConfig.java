@@ -1,3 +1,4 @@
+
 package com.kdma.auth.config;
 
 import javax.sql.DataSource;
@@ -10,11 +11,12 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 @Configuration
 public class JDBCTokenStoreConfig {
+
   @Autowired
   private DataSource dataSource;
-  
+
   @Bean
   public TokenStore tokenStore() {
-	  return new JdbcTokenStore(dataSource);
+    return new JdbcTokenStore(dataSource);
   }
 }
