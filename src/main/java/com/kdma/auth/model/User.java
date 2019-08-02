@@ -15,13 +15,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "users")

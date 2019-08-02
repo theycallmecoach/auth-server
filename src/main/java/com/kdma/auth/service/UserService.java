@@ -1,17 +1,17 @@
 
 package com.kdma.auth.service;
 
+import com.kdma.auth.model.User;
+import com.kdma.auth.repository.UserRepository;
+
 import java.util.Optional;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import com.kdma.auth.model.User;
-import com.kdma.auth.repository.UserRepository;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Class UserService.

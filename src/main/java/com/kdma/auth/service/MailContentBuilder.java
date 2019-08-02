@@ -24,7 +24,7 @@ public class MailContentBuilder {
   }
 
   /**
-   * Populate email template with given message
+   * Populate email template with given message.
    *
    * @param message
    *          the message

@@ -8,6 +8,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
+import com.kdma.auth.AuthProperties;
+import com.kdma.auth.model.User;
+import com.kdma.auth.repository.UserRepository;
+
 import java.util.Locale;
 import java.util.Optional;
 
@@ -21,10 +25,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.kdma.auth.AuthProperties;
-import com.kdma.auth.model.User;
-import com.kdma.auth.repository.UserRepository;
-
 public class AccountServiceImplTest {
 
   @Mock
@@ -34,7 +34,7 @@ public class AccountServiceImplTest {
   private EmailService emailService;
 
   @Mock
-  private BCryptPasswordEncoder bCryptPasswordEncoder;
+  private BCryptPasswordEncoder bcryptPasswordEncoder;
 
   @Mock
   private MessageSource messages;
@@ -47,6 +47,9 @@ public class AccountServiceImplTest {
 
   private ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
 
+  /**
+   * Sets the up.
+   */
   @Before
   public void setUp() {
 
@@ -56,7 +59,7 @@ public class AccountServiceImplTest {
     properties.setRedirectionUrl("http://www.example.com");
     properties.setEmailFrom("noreply@example.com");
 
-    accountService = new AccountServiceImpl(userRepository, emailService, bCryptPasswordEncoder, properties, messages);
+    accountService = new AccountServiceImpl(userRepository, emailService, bcryptPasswordEncoder, properties, messages);
 
   }
 
@@ -165,8 +168,8 @@ public class AccountServiceImplTest {
 
     // then email was sent
     verify(emailService).prepareAndSend(eq("user@example.com"), eq("noreply@example.com"),
-                                        eq("Registration confirmation"), mailMessageCaptor.capture(), any(
-                                                                                                          String.class));
+                                        eq("Registration confirmation"), mailMessageCaptor.capture(), 
+                                        any(String.class));
 
     assertThat(mailMessageCaptor.getValue(), is("Registration email"));
 
@@ -183,7 +186,7 @@ public class AccountServiceImplTest {
 
     // given existing user
     given(userRepository.findByConfirmationToken("1234")).willReturn(Optional.of(user));
-    given(bCryptPasswordEncoder.encode("password")).willReturn("encoded");
+    given(bcryptPasswordEncoder.encode("password")).willReturn("encoded");
 
     // when confirming user
     accountService.confirmUser("1234", "password");
@@ -259,7 +262,7 @@ public class AccountServiceImplTest {
     given(userRepository.findByEmail("user@example.com")).willReturn(Optional.of(user));
 
     // given
-    given(bCryptPasswordEncoder.matches("password", "passwordHash")).willReturn(true);
+    given(bcryptPasswordEncoder.matches("password", "passwordHash")).willReturn(true);
 
     boolean success = accountService.changePassword("user@example.com", "password", "secret");
 
@@ -276,7 +279,7 @@ public class AccountServiceImplTest {
     given(userRepository.findByEmail("user@example.com")).willReturn(Optional.of(user));
 
     // given
-    given(bCryptPasswordEncoder.matches("password", "passwordHash")).willReturn(false);
+    given(bcryptPasswordEncoder.matches("password", "passwordHash")).willReturn(false);
 
     boolean success = accountService.changePassword("user@example.com", "password", "secret");
 
@@ -293,7 +296,7 @@ public class AccountServiceImplTest {
     given(userRepository.findByEmail("user@example.com")).willReturn(Optional.of(user));
 
     // given
-    given(bCryptPasswordEncoder.matches("password", "passwordHash")).willReturn(true);
+    given(bcryptPasswordEncoder.matches("password", "passwordHash")).willReturn(true);
 
     boolean success = accountService.changeEmail("user@example.com", "password", "john@example.com", Locale.ENGLISH);
 
@@ -310,7 +313,7 @@ public class AccountServiceImplTest {
     given(userRepository.findByEmail("user@example.com")).willReturn(Optional.of(user));
 
     // given
-    given(bCryptPasswordEncoder.matches("password", "passwordHash")).willReturn(false);
+    given(bcryptPasswordEncoder.matches("password", "passwordHash")).willReturn(false);
 
     boolean success = accountService.changeEmail("user@example.com", "password", "user2@example.com", Locale.ENGLISH);
 
@@ -331,7 +334,7 @@ public class AccountServiceImplTest {
     given(userRepository.findByEmail("user2@example.com")).willReturn(Optional.of(user2));
 
     // given
-    given(bCryptPasswordEncoder.matches("password", "passwordHash")).willReturn(true);
+    given(bcryptPasswordEncoder.matches("password", "passwordHash")).willReturn(true);
 
     boolean success = accountService.changeEmail("user@example.com", "password", "user2@example.com", Locale.ENGLISH);
 
@@ -348,7 +351,7 @@ public class AccountServiceImplTest {
     given(userRepository.findByEmail("user@example.com")).willReturn(Optional.of(user));
 
     // given
-    given(bCryptPasswordEncoder.matches("password", "passwordHash")).willReturn(true);
+    given(bcryptPasswordEncoder.matches("password", "passwordHash")).willReturn(true);
 
     accountService.changeEmail("user@example.com", "password", "user2@example.com", Locale.ENGLISH);
 

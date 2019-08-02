@@ -5,15 +5,15 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
+import com.kdma.auth.model.User;
+import com.kdma.auth.repository.UserRepository;
+
 import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import com.kdma.auth.model.User;
-import com.kdma.auth.repository.UserRepository;
 
 public class UserServiceTest {
 
@@ -22,6 +22,9 @@ public class UserServiceTest {
 
   private UserService userService;
 
+  /**
+   * Sets the up.
+   */
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);

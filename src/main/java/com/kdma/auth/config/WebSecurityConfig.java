@@ -46,20 +46,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   protected void configure(HttpSecurity http) throws Exception {
 
     // @formatter:off
-	    http
-	      // Enable CORS
-	      .cors().and()
-	      // Set login page
-	      .formLogin().loginPage(LOGIN).permitAll().defaultSuccessUrl(PROFILE).and()
-	      // These requests are permitted without authorization
-	      .authorizeRequests().antMatchers("/", "/css/*", "/health", 
-	          LOGIN, REGISTER, CONFIRM, CONFIRM_REDIRECT, FORGOTTEN, VERIFY, ERROR)
-	          .permitAll()
-	      // These requests are secured by the following way
-	      .anyRequest().authenticated().and()
-	      // Set logout handling
-	      .logout().logoutSuccessUrl(LOGOUT_SUCCESS);
-	      // @formatter:on
+    http
+      // Enable CORS
+      .cors().and()
+      // Set login page
+      .formLogin().loginPage(LOGIN).permitAll().defaultSuccessUrl(PROFILE).and()
+      // These requests are permitted without authorization
+      .authorizeRequests().antMatchers("/", "/css/*", "/health", 
+          LOGIN, REGISTER, CONFIRM, CONFIRM_REDIRECT, FORGOTTEN, VERIFY, ERROR)
+          .permitAll()
+      // These requests are secured by the following way
+      .anyRequest().authenticated().and()
+      // Set logout handling
+      .logout().logoutSuccessUrl(LOGOUT_SUCCESS);
+      // @formatter:on
 
   }
 

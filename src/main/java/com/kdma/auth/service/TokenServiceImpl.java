@@ -3,12 +3,12 @@ package com.kdma.auth.service;
 
 import java.util.Collection;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.stereotype.Service;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The TokenService implementation.

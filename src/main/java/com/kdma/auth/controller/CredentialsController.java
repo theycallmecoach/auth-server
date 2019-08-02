@@ -1,11 +1,17 @@
 
 package com.kdma.auth.controller;
 
+import com.kdma.auth.model.User;
+import com.kdma.auth.service.AccountService;
+import com.kdma.auth.service.TokenService;
+
 import java.security.Principal;
 import java.util.Locale;
 import java.util.Optional;
 
 import javax.validation.Valid;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -13,12 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.kdma.auth.model.User;
-import com.kdma.auth.service.AccountService;
-import com.kdma.auth.service.TokenService;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller

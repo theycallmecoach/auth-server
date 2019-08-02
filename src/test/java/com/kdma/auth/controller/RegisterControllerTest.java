@@ -8,6 +8,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kdma.auth.AuthProperties;
+import com.kdma.auth.model.User;
+import com.kdma.auth.service.AccountService;
+
 import java.util.Locale;
 
 import org.junit.Test;
@@ -18,11 +23,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kdma.auth.AuthProperties;
-import com.kdma.auth.model.User;
-import com.kdma.auth.service.AccountService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = RegisterController.class, secure = false)

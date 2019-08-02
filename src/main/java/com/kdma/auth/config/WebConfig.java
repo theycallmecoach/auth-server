@@ -1,6 +1,8 @@
 
 package com.kdma.auth.config;
 
+import com.kdma.auth.AuthProperties;
+
 import java.util.Locale;
 
 import org.springframework.context.annotation.Bean;
@@ -11,8 +13,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
-import com.kdma.auth.AuthProperties;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -25,14 +25,11 @@ public class WebConfig implements WebMvcConfigurer {
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    // @formatter:off
-	    registry
-	      .addMapping("/**")
-	      .allowedOrigins(properties.getCorsAllowedOrigins())
-	      .allowedHeaders("*")
-	      .allowedMethods("*")
-	      .allowCredentials(true);
-	    // @formatter:on
+    registry.addMapping("/**")
+            .allowedOrigins(properties.getCorsAllowedOrigins())
+            .allowedHeaders("*")
+            .allowedMethods("*")
+            .allowCredentials(true);
   }
 
   @Override
@@ -40,6 +37,11 @@ public class WebConfig implements WebMvcConfigurer {
     registry.addInterceptor(localeChangeInterceptor());
   }
 
+  /**
+   * Locale resolver.
+   *
+   * @return the locale resolver
+   */
   @Bean
   public LocaleResolver localeResolver() {
     SessionLocaleResolver slr = new SessionLocaleResolver();
@@ -47,6 +49,11 @@ public class WebConfig implements WebMvcConfigurer {
     return slr;
   }
 
+  /**
+   * Locale change interceptor.
+   *
+   * @return the locale change interceptor
+   */
   @Bean
   public LocaleChangeInterceptor localeChangeInterceptor() {
     LocaleChangeInterceptor lci = new LocaleChangeInterceptor();

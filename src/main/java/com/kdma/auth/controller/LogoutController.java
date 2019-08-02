@@ -1,11 +1,15 @@
 
 package com.kdma.auth.controller;
 
+import com.kdma.auth.service.TokenService;
+
 import java.security.Principal;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,10 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.kdma.auth.service.TokenService;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Class LogoutController.
@@ -50,9 +50,9 @@ public class LogoutController {
 
   /**
    * Direct logout.
-   * 
-   * @param request
-   * @return
+   *
+   * @param request the request
+   * @return the string
    */
   @PostMapping("/logout")
   public String logout(HttpServletRequest request) {
@@ -69,6 +69,13 @@ public class LogoutController {
     return "redirect:/login?logout";
   }
 
+  /**
+   * Global logout.
+   *
+   * @param principal the principal
+   * @param locale the locale
+   * @return the model and view
+   */
   @PostMapping("/globalLogout")
   public ModelAndView globalLogout(Principal principal, Locale locale) {
     log.debug("Global Logout");

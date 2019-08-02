@@ -23,6 +23,9 @@ public class EmailServiceTest {
 
   private EmailService emailService;
 
+  /**
+   * Sets the up.
+   */
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);

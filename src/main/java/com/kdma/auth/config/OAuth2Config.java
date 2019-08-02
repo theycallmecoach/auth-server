@@ -30,6 +30,14 @@ public class OAuth2Config extends AuthorizationServerConfigurerAdapter {
 
   private final AuthenticationManager authenticationManager;
 
+  /**
+   * Instantiates a new o auth 2 config.
+   *
+   * @param userService the user service
+   * @param tokenStore the token store
+   * @param dataSource the data source
+   * @param authenticationManager the authentication manager
+   */
   public OAuth2Config(UserDetailsService userService, TokenStore tokenStore, DataSource dataSource,
                       @Lazy AuthenticationManager authenticationManager) {
     this.userService = userService;

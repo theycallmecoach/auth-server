@@ -1,6 +1,9 @@
 
 package com.kdma.auth.controller;
 
+import com.kdma.auth.model.User;
+import com.kdma.auth.repository.UserRepository;
+
 import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
@@ -8,6 +11,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.MessageSource;
 import org.springframework.security.access.annotation.Secured;
@@ -18,11 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.kdma.auth.model.User;
-import com.kdma.auth.repository.UserRepository;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Class UserController.
@@ -46,10 +46,10 @@ public class UserController {
   private final MessageSource messages;
 
   /**
-   * User Controller
-   * 
-   * @param repository
-   * @param messages
+   * User Controller.
+   *
+   * @param repository the repository
+   * @param messages the messages
    */
   public UserController(UserRepository repository, MessageSource messages) {
     this.repository = repository;
@@ -57,10 +57,9 @@ public class UserController {
   }
 
   /**
-   * Return the User
-   * 
-   * @param principal
-   *          contains the security context
+   * Return the User.
+   *
+   * @param principal          contains the security context
    * @return the user
    */
   @GetMapping("/user")
@@ -73,9 +72,9 @@ public class UserController {
 
   /**
    * Return the deleteAccount page.
-   * 
-   * @param locale
-   * @return
+   *
+   * @param locale the locale
+   * @return the model and view
    */
   @GetMapping("/deleteAccount")
   public ModelAndView deleteAccountPage(Locale locale) {
@@ -86,11 +85,11 @@ public class UserController {
 
   /**
    * Delete an account.
-   * 
-   * @param request
-   * @param principal
-   * @param locale
-   * @return
+   *
+   * @param request the request
+   * @param principal the principal
+   * @param locale the locale
+   * @return the model and view
    */
   @PostMapping("/deleteAccount")
   public ModelAndView deleteAccount(HttpServletRequest request, Principal principal, Locale locale) {
@@ -103,6 +102,14 @@ public class UserController {
     return modelAndView;
   }
 
+  /**
+   * Delete success page.
+   *
+   * @param request the request
+   * @param locale the locale
+   * @param success the success
+   * @return the model and view
+   */
   @GetMapping("/deleteSuccess")
   public ModelAndView deleteSuccessPage(HttpServletRequest request, Locale locale,
                                         @RequestParam(value = "success", required = false) boolean success) {

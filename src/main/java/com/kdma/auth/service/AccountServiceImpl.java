@@ -1,20 +1,20 @@
 
 package com.kdma.auth.service;
 
+import com.kdma.auth.AuthProperties;
+import com.kdma.auth.model.User;
+import com.kdma.auth.repository.UserRepository;
+
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.kdma.auth.AuthProperties;
-import com.kdma.auth.model.User;
-import com.kdma.auth.repository.UserRepository;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Class AccountServiceImpl.

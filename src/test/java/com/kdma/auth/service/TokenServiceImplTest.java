@@ -29,6 +29,9 @@ public class TokenServiceImplTest {
 
   private TokenService tokenService;
 
+  /**
+   * Sets the up.
+   */
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);

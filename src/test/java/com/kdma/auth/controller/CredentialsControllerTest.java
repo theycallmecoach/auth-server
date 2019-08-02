@@ -5,6 +5,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import com.kdma.auth.AuthProperties;
+import com.kdma.auth.service.AccountService;
+import com.kdma.auth.service.TokenService;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.kdma.auth.AuthProperties;
-import com.kdma.auth.service.AccountService;
-import com.kdma.auth.service.TokenService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = CredentialsController.class, secure = false)
@@ -43,8 +43,8 @@ public class CredentialsControllerTest {
   public void testGivenChangePasswordEndpointWhenAccessingForgottenPageThenVerifyChangePasswordReturned()
       throws Exception {
     // @formatter:off
-		this.mvc.perform(get("/changePassword")).andExpect(status().isOk()).andExpect(view().name("changePassword"));
-		// @formatter:on
+    this.mvc.perform(get("/changePassword")).andExpect(status().isOk()).andExpect(view().name("changePassword"));
+    // @formatter:on
   }
 
 }

@@ -1,10 +1,10 @@
 
 package com.kdma.auth.service;
 
+import com.kdma.auth.model.User;
+
 import java.util.Locale;
 import java.util.Optional;
-
-import com.kdma.auth.model.User;
 
 /**
  * The Interface AccountService.

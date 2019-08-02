@@ -1,10 +1,15 @@
 
 package com.kdma.auth.controller;
 
+import com.kdma.auth.model.User;
+import com.kdma.auth.service.AccountService;
+
 import java.util.Locale;
 import java.util.Optional;
 
 import javax.validation.Valid;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -13,11 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
-
-import com.kdma.auth.model.User;
-import com.kdma.auth.service.AccountService;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The Class RegisterController.
@@ -40,6 +40,14 @@ public class RegisterController {
 
   private final MessageSource messages;
 
+  /**
+   * Instantiates a new register controller.
+   *
+   * @param accountService
+   *          the account service
+   * @param messages
+   *          the messages
+   */
   public RegisterController(AccountService accountService, MessageSource messages) {
     super();
     this.accountService = accountService;
@@ -58,6 +66,17 @@ public class RegisterController {
     return modelAndView;
   }
 
+  /**
+   * Process registration form.
+   *
+   * @param modelAndView
+   *          the model and view
+   * @param user
+   *          the user
+   * @param locale
+   *          the locale
+   * @return the model and view
+   */
   @PostMapping("/register")
   public ModelAndView processRegistrationForm(ModelAndView modelAndView, @Valid User user, Locale locale) {
     log.debug("User registration - POST");
@@ -81,7 +100,23 @@ public class RegisterController {
     return modelAndView;
   }
 
+  /**
+   * Show confirmation page.
+   *
+   * @param modelAndView
+   *          the model and view
+   * @param token
+   *          the token
+   * @param mobile
+   *          the mobile
+   * @param passwordError
+   *          the password error
+   * @param locale
+   *          the locale
+   * @return the model and view
+   */
   @GetMapping("/confirm")
+  @SuppressWarnings("checkstyle:linelength")  
   public ModelAndView showConfirmationPage(final ModelAndView modelAndView, @RequestParam("token") String token,
                                            @RequestParam(value = "mobile", required = false, defaultValue = "false") boolean mobile,
                                            @RequestParam(value = "passwordError", required = false) boolean passwordError,
@@ -110,6 +145,16 @@ public class RegisterController {
     return "redirect:/confirm?token=" + token;
   }
 
+  /**
+   * Process confirmation form.
+   *
+   * @param modelAndView the model and view
+   * @param token the token
+   * @param password the password
+   * @param confirmPassword the confirm password
+   * @param locale the locale
+   * @return the model and view
+   */
   @PostMapping("/confirm")
   public ModelAndView processConfirmationForm(ModelAndView modelAndView, @RequestParam("token") String token,
                                               @RequestParam("password") String password,
